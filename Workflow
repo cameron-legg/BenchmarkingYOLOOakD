@@ -1,0 +1,22 @@
+### Converting
+Download or train a model (should end with a .pt file)
+
+Goto https://tools.luxonis.com/ to convert to openvino
+
+https://learnopencv.com/object-detection-on-edge-device/
+
+
+
+
+
+What to answer:
+
+Run YOLO on Raspberry Pi and OAK-D​
+
+Run YOLO on Raspberry Pi and Coral USB TPU​
+
+Run benchmarks and record data for each​
+
+Accuracy, performance, power consumption​
+
+State comparisons​
