@@ -5,28 +5,18 @@ import cv2
 import numpy as np
 import time
 
-YOLOV8N_MODEL = "yolov11coco/yolo11n_openvino_2022.1_6shave.blob"
-YOLOV8N_CONFIG = "yolov11coco/yolo11n.json"
-INPUT_VIDEO = "videos/in/video.mp4"
+ENABLE_BENCHMARK = False  # Toggle to enable/disable benchmarking and result recording
+
+YOLOV8N_MODEL = "oakd_models/fall_detection/falldetectionmodel_openvino_2022.1_6shave.blob"
+YOLOV8N_CONFIG = "oakd_models/fall_detection/falldetectionmodel.json"
+
+INPUT_VIDEO = "videos/in/falls.mp4"
 OUTPUT_VIDEO = "videos/out/result4.mp4"
 BENCHMARK_CSV = "benchmark.csv"
 DETECTIONS_JSON = "results.json"
 
 CAMERA_PREVIEW_DIM = (640, 640)
-LABELS = [
-    "person", "bicycle", "car", "motorcycle", "airplane", "bus", "train",
-    "truck", "boat", "traffic light", "fire hydrant", "stop sign", "parking meter",
-    "bench", "bird", "cat", "dog", "horse", "sheep", "cow", "elephant", "bear",
-    "zebra", "giraffe", "backpack", "umbrella", "handbag", "tie", "suitcase",
-    "frisbee", "skis", "snowboard", "sports ball", "kite", "baseball bat",
-    "baseball glove", "skateboard", "surfboard", "tennis racket", "bottle",
-    "wine glass", "cup", "fork", "knife", "spoon", "bowl", "banana", "apple",
-    "sandwich", "orange", "broccoli", "carrot", "hot dog", "pizza", "donut",
-    "cake", "chair", "couch", "potted plant", "bed", "dining table", "toilet",
-    "tv", "laptop", "mouse", "remote", "keyboard", "cell phone", "microwave",
-    "oven", "toaster", "sink", "refrigerator", "book", "clock", "vase",
-    "scissors", "teddy bear", "hair drier", "toothbrush"
-]
+LABELS = ['Fall Detected', 'Walking', 'Sitting']
 
 def load_config(config_path):
     with open(config_path) as f:
@@ -117,8 +107,8 @@ with dai.Device(pipeline) as device:
         if not ret:
             break
 
-        # ⏱️ Stop after 30 seconds
-        if frame_count >= int(fps_cap * 30):
+        # ⏱️ Stop after 3 minutes
+        if frame_count >= int(fps_cap * 60 * 3):
             break
 
         frame_count += 1
@@ -139,32 +129,33 @@ with dai.Device(pipeline) as device:
         frame = annotate_frame(frame, detections, current_fps)
         out.write(frame)
 
-        benchmark_data.append([frame_count, round(current_fps, 2), round(inference_time, 4)])
-        for det in detections:
-            bbox = frame_norm(frame, (det.xmin, det.ymin, det.xmax, det.ymax))
-            detection_results.append({
-                "frame": frame_count,
-                "label": LABELS[det.label],
-                "confidence": float(det.confidence),
-                "bbox": bbox.tolist()
-            })
+        if ENABLE_BENCHMARK:
+            benchmark_data.append([frame_count, round(current_fps, 2), round(inference_time, 4)])
+            for det in detections:
+                bbox = frame_norm(frame, (det.xmin, det.ymin, det.xmax, det.ymax))
+                detection_results.append({
+                    "frame": frame_count,
+                    "label": LABELS[det.label],
+                    "confidence": float(det.confidence),
+                    "bbox": bbox.tolist()
+                })
 
 cap.release()
 out.release()
 
-# Write benchmark CSV
-with open(BENCHMARK_CSV, "w") as f:
-    f.write("frame,fps,inference_time\n")
-    for row in benchmark_data:
-        f.write(",".join(map(str, row)) + "\n")
+if ENABLE_BENCHMARK:
+    with open(BENCHMARK_CSV, "w") as f:
+        f.write("frame,fps,inference_time\n")
+        for row in benchmark_data:
+            f.write(",".join(map(str, row)) + "\n")
 
-# Write detection results JSON
-with open(DETECTIONS_JSON, "w") as f:
-    json.dump(detection_results, f, indent=2)
+    with open(DETECTIONS_JSON, "w") as f:
+        json.dump(detection_results, f, indent=2)
 
-avg_fps = frame_count / (time.time() - start_time)
-avg_inference = total_inference_time / frame_count
+    avg_fps = frame_count / (time.time() - start_time)
+    avg_inference = total_inference_time / frame_count
+    print(f"[INFO] Benchmark CSV saved to {BENCHMARK_CSV}")
+    print(f"[INFO] Detections saved to {DETECTIONS_JSON}")
+    print(f"[INFO] Average FPS: {avg_fps:.2f}, Average Inference Time: {avg_inference:.4f} seconds")
+
 print(f"[INFO] Processed video {INPUT_VIDEO} and saved to {OUTPUT_VIDEO}")
-print(f"[INFO] Benchmark CSV saved to {BENCHMARK_CSV}")
-print(f"[INFO] Detections saved to {DETECTIONS_JSON}")
-print(f"[INFO] Average FPS: {avg_fps:.2f}, Average Inference Time: {avg_inference:.4f} seconds")
