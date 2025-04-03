@@ -7,8 +7,8 @@ import time
 
 ENABLE_BENCHMARK = False  # Toggle to enable/disable benchmarking and result recording
 
-YOLOV8N_MODEL = "oakd_models/pose-fall/oakd_models/pose-fall/yolov8s-pose_openvino_2022.1_6shave.blob"
-YOLOV8N_CONFIG = "oakd_models/pose-fall/oakd_models/pose-fall/yolov8s-pose.json"
+YOLOV8N_MODEL = "oakd_models/pose-fall/yolov8s-pose_openvino_2022.1_6shave.blob"
+YOLOV8N_CONFIG = "oakd_models/pose-fall/yolov8s-pose.json"
 
 INPUT_VIDEO = "videos/in/smallest.mp4"
 OUTPUT_VIDEO = "videos/out/result-pose.mp4"
