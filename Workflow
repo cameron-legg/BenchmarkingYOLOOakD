@@ -5,7 +5,7 @@ Goto https://tools.luxonis.com/ to convert to openvino
 
 https://learnopencv.com/object-detection-on-edge-device/
 
-
+https://www.kaggle.com/datasets/uttejkumarkandagatla/fall-detection-dataset?resource=download
 
 
 
