@@ -64,12 +64,29 @@ def frame_norm(frame, bbox):
     return (np.clip(np.array(bbox), 0, 1) * norm_vals).astype(int)
 
 def annotate_frame(frame, detections, fps):
-    color = (0, 0, 255)
-    for detection in detections:
-        bbox = frame_norm(frame, (detection.xmin, detection.ymin, detection.xmax, detection.ymax))
-        cv2.putText(frame, LABELS[detection.label], (bbox[0] + 10, bbox[1] + 25), cv2.FONT_HERSHEY_TRIPLEX, 1, color)
-        cv2.putText(frame, f"{int(detection.confidence * 100)}%", (bbox[0] + 10, bbox[1] + 60), cv2.FONT_HERSHEY_TRIPLEX, 1, color)
-        cv2.rectangle(frame, (bbox[0], bbox[1]), (bbox[2], bbox[3]), color, 2)
+    # color = (0, 0, 255)
+    # for detection in detections:
+    #     bbox = frame_norm(frame, (detection.xmin, detection.ymin, detection.xmax, detection.ymax))
+    #     cv2.putText(frame, LABELS[detection.label], (bbox[0] + 10, bbox[1] + 25), cv2.FONT_HERSHEY_TRIPLEX, 1, color)
+    #     cv2.putText(frame, f"{int(detection.confidence * 100)}%", (bbox[0] + 10, bbox[1] + 60), cv2.FONT_HERSHEY_TRIPLEX, 1, color)
+    #     cv2.rectangle(frame, (bbox[0], bbox[1]), (bbox[2], bbox[3]), color, 2)
+    # cv2.putText(frame, f"FPS: {fps:.2f}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+
+    for i, box in enumerate(detections):
+        x, y, w, h = box.xywh[0]  # Get bounding box details
+        fall_detected = w / h > 1.4  # Condition for fall detection
+
+        # Convert coordinates to integers
+        x, y, w, h = int(x), int(y), int(w), int(h)
+
+        # Draw bounding box
+        cv2.rectangle(frame, (x - w // 2, y - h // 2), (x + w // 2, y + h // 2), (0, 255, 0), 2)
+
+        # Display "Fall Detected" above the bounding box
+        text = "Fall Detected" if fall_detected else "Standing"
+        color = (0, 0, 255) if fall_detected else (255, 255, 255)  # Red if fall detected, white otherwise
+        cv2.putText(frame, text, (x - w // 2, y - h // 2 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+
     cv2.putText(frame, f"FPS: {fps:.2f}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
     return frame
 
