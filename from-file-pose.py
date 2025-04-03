@@ -15,7 +15,7 @@ OUTPUT_VIDEO = "videos/out/result-pose.mp4"
 BENCHMARK_CSV = "benchmark.csv"
 DETECTIONS_JSON = "results.json"
 
-CAMERA_PREVIEW_DIM = (640, 640)
+CAMERA_PREVIEW_DIM = (640, 384)
 LABELS = ['person']
 
 def load_config(config_path):
