@@ -6,8 +6,13 @@ import time
 import os
 
 # Paths to model and config
-YOLOV8N_MODEL = "yolonewfish/best_openvino_2022.1_6shave.blob"
-YOLOV8N_CONFIG = "yolonewfish/best.json"
+################# FALL DETECTION
+YOLOV8N_MODEL = "oakd_models/fall_detection/falldetectionmodel_openvino_2022.1_6shave.blob"
+YOLOV8N_CONFIG = "falldetectionmodel.json"
+
+################# FISH
+# YOLOV8N_MODEL = "oakd_models/fish/best_openvino_2022.1_6shave.blob"
+# YOLOV8N_CONFIG = "best.json"
 
 def get_next_video_filename(directory="videos/stream", base_name="result", extension=".mp4"):
     # Check for existing files in the directory
@@ -37,7 +42,13 @@ OUTPUT_VIDEO = get_next_video_filename()
 CAMERA_PREVIEW_DIM = (640, 640)
 
 #LABELS = ["person","bicycle","car","motorcycle","airplane","bus","train","truck","boat","traffic light","fire hydrant","stop sign","parking meter","bench","bird","cat","dog","horse","sheep","cow","elephant","bear","zebra","giraffe","backpack","umbrella","handbag","tie","suitcase","frisbee","skis","snowboard","sports ball","kite","baseball bat","baseball glove","skateboard","surfboard","tennis racket","bottle","wine glass","cup","fork","knife","spoon","bowl","banana","apple","sandwich","orange","broccoli","carrot","hot dog","pizza","donut","cake","chair","couch","potted plant","bed","dining table","toilet","tv","laptop","mouse","remote","keyboard","cell phone","microwave","oven","toaster","sink","refrigerator","book","clock","vase","scissors","teddy bear","hair drier","toothbrush"]
-LABELS = ['AngelFish', 'BlueTang', 'ButterflyFish', 'ClownFish', 'GoldFish', 'Gourami', 'MorishIdol', 'PlatyFish', 'RibbonedSweetlips', 'ThreeStripedDamselfish', 'YellowCichlid', 'YellowTang', 'ZebraFish']
+
+
+# FISH LABELS
+# LABELS = ['AngelFish', 'BlueTang', 'ButterflyFish', 'ClownFish', 'GoldFish', 'Gourami', 'MorishIdol', 'PlatyFish', 'RibbonedSweetlips', 'ThreeStripedDamselfish', 'YellowCichlid', 'YellowTang', 'ZebraFish']
+
+# FALL LABELS
+LABELS = ['Fall Detected', 'Walking', 'Sitting']
 
 
 def load_config(config_path):
