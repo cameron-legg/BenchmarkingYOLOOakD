@@ -8,7 +8,7 @@ import os
 # Paths to model and config
 ################# FALL DETECTION
 YOLOV8N_MODEL = "oakd_models/fall_detection/falldetectionmodel_openvino_2022.1_6shave.blob"
-YOLOV8N_CONFIG = "falldetectionmodel.json"
+YOLOV8N_CONFIG = "oakd_models/fall_detection/falldetectionmodel.json"
 
 ################# FISH
 # YOLOV8N_MODEL = "oakd_models/fish/best_openvino_2022.1_6shave.blob"

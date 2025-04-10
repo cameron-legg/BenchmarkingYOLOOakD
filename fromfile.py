@@ -10,7 +10,7 @@ ENABLE_BENCHMARK = False  # Toggle to enable/disable benchmarking and result rec
 YOLOV8N_MODEL = "oakd_models/fall_detection/falldetectionmodel_openvino_2022.1_6shave.blob"
 YOLOV8N_CONFIG = "oakd_models/fall_detection/falldetectionmodel.json"
 
-INPUT_VIDEO = "videos/in/falls.mp4"
+INPUT_VIDEO = "videos/in/smallest.mp4"
 OUTPUT_VIDEO = "videos/out/result4.mp4"
 BENCHMARK_CSV = "benchmark.csv"
 DETECTIONS_JSON = "results.json"
