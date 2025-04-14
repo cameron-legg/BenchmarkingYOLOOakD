@@ -4,11 +4,11 @@ import time
 
 MODEL_PATH = "pt_models/fall_detection/weights/best.pt"
 INPUT_VIDEO = "videos/in/benchmarkvid.mp4"
-OUTPUT_VIDEO = "videos/out/result_cpu.mp4"
+OUTPUT_VIDEO = "videos/out/result_gpu.mp4"
 
-# Force model to use CPU only
+# Force model to use GPU
 model = YOLO(MODEL_PATH)
-model.to('cpu')
+model.to('cuda')  # Move model to GPU
 
 cap = cv2.VideoCapture(INPUT_VIDEO)
 
@@ -25,13 +25,13 @@ while cap.isOpened():
     if not ret:
         break
 
-    results = model(frame, device='cpu')[0]  # Make sure inference is also on CPU
+    results = model(frame, device='cuda')[0]  # Ensure inference is on GPU
     frame_count += 1
 
     for r in results.boxes:
         cls = int(r.cls)
         conf = float(r.conf)
-        bbox = r.xyxy[0].cpu().numpy().astype(int)
+        bbox = r.xyxy[0].cpu().numpy().astype(int)  # Still move to CPU for drawing
         label = model.names[cls]
 
         cv2.rectangle(frame, (bbox[0], bbox[1]), (bbox[2], bbox[3]), (0, 0, 255), 2)

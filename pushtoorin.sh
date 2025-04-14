@@ -10,7 +10,9 @@ tar -cf archive.tar oakd_models/fall_detection_6shaves/falldetectionmodel_openvi
     videos/in/benchmarkvid.mp4 \
     fromfile_cpu.py \
     fromfile.py \
-    fromstream.py
+    fromstream.py \
+    fromfile_gpu.py \
+    RunBenchmarks.sh
 
 
 scp archive.tar clegg@orin:~/project
