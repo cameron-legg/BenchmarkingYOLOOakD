@@ -28,7 +28,7 @@ else:
 
 
 INPUT_VIDEO = "videos/in/benchmarkvid.mp4"
-OUTPUT_VIDEO = "videos/out/result.mp4"
+OUTPUT_VIDEO = "videos/out/result_oakd.mp4"
 BENCHMARK_CSV = "benchmark.csv"
 DETECTIONS_JSON = "results.json"
 

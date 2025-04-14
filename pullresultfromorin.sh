@@ -1,1 +1,1 @@
-scp clegg@orin:~/project/videos/out/result.mp4 videos/out/
+scp -r clegg@orin:~/project/videos/out/* videos/out/
