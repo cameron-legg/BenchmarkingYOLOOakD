@@ -7,11 +7,25 @@ import time
 
 ENABLE_BENCHMARK = False  # Toggle to enable/disable benchmarking and result recording
 
-# YOLOV8N_MODEL = "oakd_models/fall_detection/falldetectionmodel_openvino_2022.1_6shave.blob"
-# YOLOV8N_CONFIG = "oakd_models/fall_detection/falldetectionmodel.json"
+num_shaves = int(input("Number of shaves: 6,8,16"))
+YOLOV8N_MODEL = ""
+YOLOV8N_CONFIG = ""
+if(num_shaves == 6):
+    # 6 shaves
+    print("RUNNING 6 SHAVES MODEL")
+    YOLOV8N_MODEL = "oakd_models/fall_detection_6shaves/falldetectionmodel_openvino_2022.1_6shave.blob"
+    YOLOV8N_CONFIG = "oakd_models/fall_detection_6shaves/falldetectionmodel.json"
+elif(num_shaves == 8):
+    # 8 shaves
+    print("RUNNING 8 SHAVES MODEL")
+    YOLOV8N_MODEL = "oakd_models/fall_detection_8shaves/best_openvino_2022.1_8shave.blob"
+    YOLOV8N_CONFIG = "oakd_models/fall_detection_8shaves/best.json"
+else:
+    # 16 shaves
+    print("RUNNING 16 SHAVES MODEL")
+    YOLOV8N_MODEL = "oakd_models/fall_detection_16shaves/best_openvino_2022.1_16shave.blob"
+    YOLOV8N_CONFIG = "oakd_models/fall_detection_16shaves/best.json"
 
-YOLOV8N_MODEL = "oakd_models/fall_detection_8shaves/best_openvino_2022.1_8shave.blob"
-YOLOV8N_CONFIG = "oakd_models/fall_detection_8shaves/best.json"
 
 INPUT_VIDEO = "videos/in/benchmarkvid.mp4"
 OUTPUT_VIDEO = "videos/out/result.mp4"

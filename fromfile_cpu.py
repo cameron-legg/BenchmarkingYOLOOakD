@@ -1,15 +1,15 @@
-#### I THINK THIS IS ONLY WORKING ON THE CPU
-
-
 from ultralytics import YOLO
 import cv2
 import time
 
 MODEL_PATH = "pt_models/fall_detection/weights/best.pt"
-INPUT_VIDEO = "videos/in/long_vid.mp4"
-OUTPUT_VIDEO = "result_orin.mp4"
+INPUT_VIDEO = "videos/in/benchmarkvid.mp4"
+OUTPUT_VIDEO = "result_cpu.mp4"
 
+# Force model to use CPU only
 model = YOLO(MODEL_PATH)
+model.to('cpu')
+
 cap = cv2.VideoCapture(INPUT_VIDEO)
 
 fps = cap.get(cv2.CAP_PROP_FPS)
@@ -25,7 +25,7 @@ while cap.isOpened():
     if not ret:
         break
 
-    results = model(frame)[0]
+    results = model(frame, device='cpu')[0]  # Make sure inference is also on CPU
     frame_count += 1
 
     for r in results.boxes:
