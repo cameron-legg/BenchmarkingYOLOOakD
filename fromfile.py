@@ -7,11 +7,14 @@ import time
 
 ENABLE_BENCHMARK = False  # Toggle to enable/disable benchmarking and result recording
 
-YOLOV8N_MODEL = "oakd_models/fall_detection/falldetectionmodel_openvino_2022.1_6shave.blob"
-YOLOV8N_CONFIG = "oakd_models/fall_detection/falldetectionmodel.json"
+# YOLOV8N_MODEL = "oakd_models/fall_detection/falldetectionmodel_openvino_2022.1_6shave.blob"
+# YOLOV8N_CONFIG = "oakd_models/fall_detection/falldetectionmodel.json"
 
-INPUT_VIDEO = "videos/in/smallest.mp4"
-OUTPUT_VIDEO = "videos/out/result4.mp4"
+YOLOV8N_MODEL = "oakd_models/fall_detection_16shaves/best_openvino_2022.1_16shave.blob"
+YOLOV8N_CONFIG = "oakd_models/fall_detection_16shaves/best.json"
+
+INPUT_VIDEO = "videos/in/benchmarkvid.mp4"
+OUTPUT_VIDEO = "videos/out/result.mp4"
 BENCHMARK_CSV = "benchmark.csv"
 DETECTIONS_JSON = "results.json"
 
