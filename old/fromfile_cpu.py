@@ -1,10 +1,12 @@
 from ultralytics import YOLO
 import cv2
 import time
+import datetime
 
 MODEL_PATH = "pt_models/fall_detection/weights/best.pt"
 INPUT_VIDEO = "videos/in/benchmarkvid.mp4"
-OUTPUT_VIDEO = "videos/out/result_cpu.mp4"
+saved_file_timestamp = datetime.datetime.now().strftime("%m%d_%H%M%S")
+OUTPUT_VIDEO = f"videos/out/result_cpu_{saved_file_timestamp}.mp4"
 
 # Force model to use CPU only
 model = YOLO(MODEL_PATH)

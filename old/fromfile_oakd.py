@@ -4,8 +4,7 @@ import os
 import cv2
 import numpy as np
 import time
-
-ENABLE_BENCHMARK = False  # Toggle to enable/disable benchmarking and result recording
+import datetime
 
 num_shaves = int(input("Number of shaves: 6,8,16"))
 YOLOV8N_MODEL = ""
@@ -26,11 +25,9 @@ else:
     YOLOV8N_MODEL = "oakd_models/fall_detection_16shaves/best_openvino_2022.1_16shave.blob"
     YOLOV8N_CONFIG = "oakd_models/fall_detection_16shaves/best.json"
 
-
+saved_file_timestamp = datetime.datetime.now().strftime("%m%d_%H%M%S")
 INPUT_VIDEO = "videos/in/benchmarkvid.mp4"
-OUTPUT_VIDEO = "videos/out/result_oakd.mp4"
-BENCHMARK_CSV = "benchmark.csv"
-DETECTIONS_JSON = "results.json"
+OUTPUT_VIDEO = f"videos/out/result_oakd_{saved_file_timestamp}.mp4"
 
 CAMERA_PREVIEW_DIM = (640, 640)
 LABELS = ['Fall Detected', 'Walking', 'Sitting']
@@ -101,9 +98,6 @@ frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 fps_cap = cap.get(cv2.CAP_PROP_FPS)
 out = cv2.VideoWriter(OUTPUT_VIDEO, cv2.VideoWriter_fourcc(*'mp4v'), fps_cap, (frame_width, frame_height))
 
-benchmark_data = []
-detection_results = []
-
 with dai.Device(pipeline) as device:
     info = device.getDeviceInfo()
     print("[INFO] Connected to OAK device:")
@@ -146,33 +140,8 @@ with dai.Device(pipeline) as device:
         frame = annotate_frame(frame, detections, current_fps)
         out.write(frame)
 
-        if ENABLE_BENCHMARK:
-            benchmark_data.append([frame_count, round(current_fps, 2), round(inference_time, 4)])
-            for det in detections:
-                bbox = frame_norm(frame, (det.xmin, det.ymin, det.xmax, det.ymax))
-                detection_results.append({
-                    "frame": frame_count,
-                    "label": LABELS[det.label],
-                    "confidence": float(det.confidence),
-                    "bbox": bbox.tolist()
-                })
-
 cap.release()
 out.release()
 
-if ENABLE_BENCHMARK:
-    with open(BENCHMARK_CSV, "w") as f:
-        f.write("frame,fps,inference_time\n")
-        for row in benchmark_data:
-            f.write(",".join(map(str, row)) + "\n")
-
-    with open(DETECTIONS_JSON, "w") as f:
-        json.dump(detection_results, f, indent=2)
-
-    avg_fps = frame_count / (time.time() - start_time)
-    avg_inference = total_inference_time / frame_count
-    print(f"[INFO] Benchmark CSV saved to {BENCHMARK_CSV}")
-    print(f"[INFO] Detections saved to {DETECTIONS_JSON}")
-    print(f"[INFO] Average FPS: {avg_fps:.2f}, Average Inference Time: {avg_inference:.4f} seconds")
 
 print(f"[INFO] Processed video {INPUT_VIDEO} and saved to {OUTPUT_VIDEO}")
