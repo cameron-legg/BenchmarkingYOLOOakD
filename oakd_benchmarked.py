@@ -4,14 +4,13 @@ import os
 import cv2
 import numpy as np
 import time
-from pathlib import Path
-from benchmark_utils import save_unified_benchmark
-from jetsontools import Tegrastats, parse_tegrastats, get_powerdraw
-
-ENABLE_BENCHMARK = True
+import datetime
+import csv
+from collections import deque
+from jetsontools import Tegrastats, get_powerdraw, parse_tegrastats, filter_data
 
 # Model selection
-num_shaves = 8
+num_shaves = int(input("Number of shaves: 6,8,16"))
 YOLOV8N_MODEL = ""
 YOLOV8N_CONFIG = ""
 
@@ -28,13 +27,17 @@ else:
     YOLOV8N_MODEL = "oakd_models/fall_detection_16shaves/best_openvino_2022.1_16shave.blob"
     YOLOV8N_CONFIG = "oakd_models/fall_detection_16shaves/best.json"
 
+# File setup
+saved_file_timestamp = datetime.datetime.now().strftime("%m%d_%H%M%S")
 INPUT_VIDEO = "videos/in/benchmarkvid.mp4"
-OUTPUT_VIDEO = "videos/out/result_oakd.mp4"
-BENCHMARK_CSV = "benchmark.csv"
-DETECTIONS_JSON = "results.json"
+OUTPUT_VIDEO = f"videos/out/result_oakd_{saved_file_timestamp}.mp4"
+BENCHMARK_CSV = f"benchmark_results/oakd_{saved_file_timestamp}.csv"
+TEMP_POWER = f"tmp/temp_power_oakd_{saved_file_timestamp}.txt"
+os.makedirs("benchmark_results", exist_ok=True)
+
+# Constants
 CAMERA_PREVIEW_DIM = (640, 640)
 LABELS = ['Fall Detected', 'Walking', 'Sitting']
-BENCHMARK_INTERVAL = 300
 
 def load_config(config_path):
     with open(config_path) as f:
@@ -42,27 +45,29 @@ def load_config(config_path):
 
 def create_image_pipeline(config_path, model_path):
     pipeline = dai.Pipeline()
-    config = load_config(config_path)
-    nn_config = config.get("nn_config", {}).get("NN_specific_metadata", {})
+    model_config = load_config(config_path)
+    nnConfig = model_config.get("nn_config", {})
+    metadata = nnConfig.get("NN_specific_metadata", {})
 
     detectionIN = pipeline.create(dai.node.XLinkIn)
-    detectionNN = pipeline.create(dai.node.YoloDetectionNetwork)
+    detectionNetwork = pipeline.create(dai.node.YoloDetectionNetwork)
     nnOut = pipeline.create(dai.node.XLinkOut)
 
     nnOut.setStreamName("nn")
     detectionIN.setStreamName("detection_in")
-    detectionNN.setBlobPath(model_path)
-    detectionNN.setConfidenceThreshold(nn_config.get("confidence_threshold", 0.5))
-    detectionNN.setNumClasses(nn_config.get("classes", 1))
-    detectionNN.setCoordinateSize(nn_config.get("coordinates", 4))
-    detectionNN.setAnchors(nn_config.get("anchors", []))
-    detectionNN.setAnchorMasks(nn_config.get("anchor_masks", {}))
-    detectionNN.setIouThreshold(nn_config.get("iou_threshold", 0.5))
-    detectionNN.setNumInferenceThreads(2)
-    detectionNN.input.setBlocking(False)
+    detectionNetwork.setConfidenceThreshold(metadata.get("confidence_threshold", {}))
+    detectionNetwork.setNumClasses(metadata.get("classes", {}))
+    detectionNetwork.setCoordinateSize(metadata.get("coordinates", {}))
+    detectionNetwork.setAnchors(metadata.get("anchors", {}))
+    detectionNetwork.setAnchorMasks(metadata.get("anchor_masks", {}))
+    detectionNetwork.setIouThreshold(metadata.get("iou_threshold", {}))
+    detectionNetwork.setBlobPath(model_path)
+    detectionNetwork.setNumInferenceThreads(2)
+    detectionNetwork.input.setBlocking(False)
 
-    detectionIN.out.link(detectionNN.input)
-    detectionNN.out.link(nnOut.input)
+    detectionIN.out.link(detectionNetwork.input)
+    detectionNetwork.out.link(nnOut.input)
+
     return pipeline
 
 def to_planar(arr: np.ndarray, shape: tuple) -> np.ndarray:
@@ -76,15 +81,15 @@ def frame_norm(frame, bbox):
 
 def annotate_frame(frame, detections, fps):
     color = (0, 0, 255)
-    for det in detections:
-        bbox = frame_norm(frame, (det.xmin, det.ymin, det.xmax, det.ymax))
-        cv2.putText(frame, LABELS[det.label], (bbox[0] + 10, bbox[1] + 25), cv2.FONT_HERSHEY_TRIPLEX, 1, color)
-        cv2.putText(frame, f"{int(det.confidence * 100)}%", (bbox[0] + 10, bbox[1] + 60), cv2.FONT_HERSHEY_TRIPLEX, 1, color)
+    for detection in detections:
+        bbox = frame_norm(frame, (detection.xmin, detection.ymin, detection.xmax, detection.ymax))
+        cv2.putText(frame, LABELS[detection.label], (bbox[0] + 10, bbox[1] + 25), cv2.FONT_HERSHEY_TRIPLEX, 1, color)
+        cv2.putText(frame, f"{int(detection.confidence * 100)}%", (bbox[0] + 10, bbox[1] + 60), cv2.FONT_HERSHEY_TRIPLEX, 1, color)
         cv2.rectangle(frame, (bbox[0], bbox[1]), (bbox[2], bbox[3]), color, 2)
     cv2.putText(frame, f"FPS: {fps:.2f}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
     return frame
 
-# Setup
+# Init video & pipeline
 pipeline = create_image_pipeline(YOLOV8N_CONFIG, YOLOV8N_MODEL)
 cap = cv2.VideoCapture(INPUT_VIDEO)
 frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -92,85 +97,64 @@ frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 fps_cap = cap.get(cv2.CAP_PROP_FPS)
 out = cv2.VideoWriter(OUTPUT_VIDEO, cv2.VideoWriter_fourcc(*'mp4v'), fps_cap, (frame_width, frame_height))
 
-benchmark_data = []
-detection_results = []
-interval_data = {'fps': [], 'confidence': []}
-header_written = [False]
-tegrastats_path = Path("output_stats_oakd.txt")
+# Benchmarking buffers
+fps_queue = deque(maxlen=300)
+timestamps = []
 
-with dai.Device(pipeline) as device, Tegrastats(tegrastats_path, interval=5):
-    print(f"[INFO] Connected to OAK device: {device.getDeviceInfo().name}")
+with open(BENCHMARK_CSV, mode='w', newline='') as csv_file:
+    writer = csv.writer(csv_file)
+    writer.writerow(["frame", "fps", "VDD_IN", "VDD_CPU_GPU_CV", "VDD_SOC", "VDD_TOTAL"])
 
-    detectionIN = device.getInputQueue("detection_in")
-    detectionNN = device.getOutputQueue("nn")
+    with Tegrastats(TEMP_POWER, interval=5):
+        with dai.Device(pipeline) as device:
+            print(f"[INFO] Connected to OAK-D device: {device.getDeviceInfo()}")
 
-    start_time = time.time()
-    frame_count = 0
-    total_inference_time = 0.0
+            detectionIN = device.getInputQueue("detection_in")
+            detectionNN = device.getOutputQueue("nn")
 
-    while cap.isOpened():
-        ret, frame = cap.read()
-        if not ret or frame_count >= int(fps_cap * 60 * 3):
-            break
+            start_time = time.time()
+            frame_count = 0
 
-        frame_count += 1
+            while cap.isOpened():
+                ret, frame = cap.read()
+                if not ret or frame_count >= int(fps_cap * 60 * 3):
+                    break
 
-        nn_data = dai.NNData()
-        nn_data.setLayer("input", to_planar(frame, CAMERA_PREVIEW_DIM))
-        detectionIN.send(nn_data)
+                t_start = time.time()
+                frame_count += 1
 
-        inference_start = time.time()
-        inDet = detectionNN.get()
-        inference_time = time.time() - inference_start
-        total_inference_time += inference_time
+                nn_data = dai.NNData()
+                nn_data.setLayer("input", to_planar(frame, CAMERA_PREVIEW_DIM))
+                detectionIN.send(nn_data)
 
-        detections = inDet.detections if inDet else []
-        current_fps = frame_count / (time.time() - start_time)
+                inDet = detectionNN.get()
+                detections = inDet.detections if inDet else []
 
-        frame = annotate_frame(frame, detections, current_fps)
-        out.write(frame)
+                elapsed = time.time() - start_time
+                current_fps = frame_count / elapsed if elapsed > 0 else 0
+                fps_queue.append(current_fps)
+                timestamps.append((t_start, time.time()))
 
-        interval_data['fps'].append(current_fps)
-        interval_data['confidence'].extend([float(det.confidence) for det in detections])
+                frame = annotate_frame(frame, detections, current_fps)
+                out.write(frame)
 
-        if frame_count % BENCHMARK_INTERVAL == 0:
-            output = parse_tegrastats(tegrastats_path)
-            if not output:
-                print(f"[WARNING] No tegrastats data available at frame {frame_count}. Skipping benchmark.")
-            else:
-                power_data = get_powerdraw(output)
-                save_unified_benchmark("oakd", interval_data, tegrastats_path, (frame_count, frame_count), header_written)
-                interval_data = {'fps': [], 'confidence': []}
-                header_written[0] = True
+                if frame_count % 300 == 0:
+                    parsed = parse_tegrastats(TEMP_POWER)
+                    filtered, _ = filter_data(parsed, timestamps[-300:])
+                    power_data = get_powerdraw(filtered)
 
-        if ENABLE_BENCHMARK:
-            benchmark_data.append([frame_count, round(current_fps, 2), round(inference_time, 4)])
-            for det in detections:
-                bbox = frame_norm(frame, (det.xmin, det.ymin, det.xmax, det.ymax))
-                detection_results.append({
-                    "frame": frame_count,
-                    "label": LABELS[det.label],
-                    "confidence": float(det.confidence),
-                    "bbox": bbox.tolist()
-                })
+                    avg_fps = sum(fps_queue) / len(fps_queue)
+                    writer.writerow([
+                        frame_count,
+                        avg_fps,
+                        power_data["VDD_IN"].mean,
+                        power_data["VDD_CPU_GPU_CV"].mean,
+                        power_data["VDD_SOC"].mean,
+                        power_data["VDD_TOTAL"].mean,
+                    ])
 
-# Save optional logs
+# Cleanup
 cap.release()
 out.release()
-
-if ENABLE_BENCHMARK:
-    with open(BENCHMARK_CSV, "w") as f:
-        f.write("frame,fps,inference_time\n")
-        for row in benchmark_data:
-            f.write(",".join(map(str, row)) + "\n")
-
-    with open(DETECTIONS_JSON, "w") as f:
-        json.dump(detection_results, f, indent=2)
-
-    avg_fps = frame_count / (time.time() - start_time)
-    avg_inference = total_inference_time / frame_count
-    print(f"[INFO] Benchmark CSV saved to {BENCHMARK_CSV}")
-    print(f"[INFO] Detections saved to {DETECTIONS_JSON}")
-    print(f"[INFO] Average FPS: {avg_fps:.2f}, Average Inference Time: {avg_inference:.4f} seconds")
-
-print(f"[INFO] Processed video {INPUT_VIDEO} and saved to {OUTPUT_VIDEO}")
+print(f"[INFO] Saved video to {OUTPUT_VIDEO}")
+print(f"[INFO] Benchmark CSV saved to {BENCHMARK_CSV}")
