@@ -10,7 +10,6 @@ tar -cf archive.tar ../oakd_models/fall_detection_6shaves/falldetectionmodel_ope
     ../videos/in/benchmarkvid.mp4 \
     ../videos/out/placeholder \
     RunBenchmarks.sh \
-    ../benchmark_utils.py \
     ../cpu_benchmarked.py \
     ../gpu_benchmarked.py \
     ../oakd_benchmarked.py \
