@@ -82,3 +82,6 @@ def gpu_benchmark(video_name):
     out.release()
     print(f"[INFO] Saved to {OUTPUT_VIDEO}")
     print(f"[INFO] Benchmarks saved to {BENCHMARK_CSV}")
+
+if __name__ == "__main__":
+    gpu_benchmark("benchmarkvid.mp4")

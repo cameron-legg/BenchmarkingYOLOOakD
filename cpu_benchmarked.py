@@ -84,3 +84,7 @@ def cpu_benchmark(video_name):
     out.release()
     print(f"[INFO] Processed video {INPUT_VIDEO} and saved to {OUTPUT_VIDEO}")
     print(f"[INFO] Benchmarks saved to {BENCHMARK_CSV}")
+
+
+if __name__ == "__main__":
+    cpu_benchmark("benchmarkvid.mp4")

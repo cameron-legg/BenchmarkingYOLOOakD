@@ -160,3 +160,8 @@ def oakd_benchmark(video_name, num_shaves=8):
     out.release()
     print(f"[INFO] Saved video to {OUTPUT_VIDEO}")
     print(f"[INFO] Benchmark CSV saved to {BENCHMARK_CSV}")
+
+
+
+if __name__ == "__main__":
+    oakd_benchmark("benchmarkvid.mp4",6)
