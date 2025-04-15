@@ -13,7 +13,8 @@ tar -cf archive.tar ../oakd_models/fall_detection_6shaves/falldetectionmodel_ope
     ../cpu_benchmarked.py \
     ../gpu_benchmarked.py \
     ../oakd_benchmarked.py \
-    ../tmp/placeholder
+    ../tmp/placeholder \
+    ../Master_Benchmark.py
     # ../fromfile_cpu.py \
     # ../fromfile.py \
     # ../fromstream.py \
