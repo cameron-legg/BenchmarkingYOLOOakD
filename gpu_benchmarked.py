@@ -1,82 +1,84 @@
-from ultralytics import YOLO
-import cv2
-import time
-import datetime
-import csv
-import os
-from jetsontools import Tegrastats, get_powerdraw, parse_tegrastats, filter_data
 
-MODEL_PATH = "pt_models/fall_detection/weights/best.pt"
-INPUT_VIDEO = "videos/in/benchmarkvid.mp4"
-saved_file_timestamp = datetime.datetime.now().strftime("%m%d_%H%M%S")
-OUTPUT_VIDEO = f"videos/out/result_gpu_{saved_file_timestamp}.mp4"
-BENCHMARK_CSV = f"benchmark_results/gpu_{saved_file_timestamp}.csv"
+def gpu_benchmark(video_name):
+    from ultralytics import YOLO
+    import cv2
+    import time
+    import datetime
+    import csv
+    import os
+    from jetsontools import Tegrastats, get_powerdraw, parse_tegrastats, filter_data
 
-os.makedirs("benchmark_results", exist_ok=True)
+    MODEL_PATH = "pt_models/fall_detection/weights/best.pt"
+    INPUT_VIDEO = f"videos/in/{video_name}"
+    saved_file_timestamp = datetime.datetime.now().strftime("%m%d_%H%M%S")
+    OUTPUT_VIDEO = f"videos/out/result_gpu_{saved_file_timestamp}.mp4"
+    BENCHMARK_CSV = f"benchmark_results/gpu_{saved_file_timestamp}.csv"
 
-model = YOLO(MODEL_PATH)
-model.to('cuda')
-cap = cv2.VideoCapture(INPUT_VIDEO)
+    os.makedirs("benchmark_results", exist_ok=True)
 
-fps = cap.get(cv2.CAP_PROP_FPS)
-frame_w = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-frame_h = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-out = cv2.VideoWriter(OUTPUT_VIDEO, cv2.VideoWriter_fourcc(*'mp4v'), fps, (frame_w, frame_h))
+    model = YOLO(MODEL_PATH)
+    model.to('cuda')
+    cap = cv2.VideoCapture(INPUT_VIDEO)
 
-frame_count = 0
-timestamps = []
-fps_list = []
-start_time = time.time()
+    fps = cap.get(cv2.CAP_PROP_FPS)
+    frame_w = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+    frame_h = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    out = cv2.VideoWriter(OUTPUT_VIDEO, cv2.VideoWriter_fourcc(*'mp4v'), fps, (frame_w, frame_h))
 
-with open(BENCHMARK_CSV, mode='w', newline='') as csv_file:
-    writer = csv.writer(csv_file)
-    writer.writerow(["frame", "fps", "VDD_IN", "VDD_CPU_GPU_CV", "VDD_SOC", "VDD_TOTAL"])
+    frame_count = 0
+    timestamps = []
+    fps_list = []
+    start_time = time.time()
 
-    with Tegrastats(f"tmp/temp_power_gpu_{saved_file_timestamp}.txt", interval=5):
-        while cap.isOpened():
-            ret, frame = cap.read()
-            if not ret:
-                break
+    with open(BENCHMARK_CSV, mode='w', newline='') as csv_file:
+        writer = csv.writer(csv_file)
+        writer.writerow(["frame", "fps", "VDD_IN", "VDD_CPU_GPU_CV", "VDD_SOC", "VDD_TOTAL"])
 
-            t_start = time.time()
-            results = model(frame, device='cuda')[0]
-            t_end = time.time()
+        with Tegrastats(f"tmp/temp_power_gpu_{saved_file_timestamp}.txt", interval=5):
+            while cap.isOpened():
+                ret, frame = cap.read()
+                if not ret:
+                    break
 
-            frame_count += 1
-            elapsed = time.time() - start_time
-            current_fps = frame_count / elapsed
-            fps_list.append(current_fps)
-            timestamps.append((t_start, t_end))
+                t_start = time.time()
+                results = model(frame, device='cuda')[0]
+                t_end = time.time()
 
-            for r in results.boxes:
-                cls = int(r.cls)
-                conf = float(r.conf)
-                bbox = r.xyxy[0].cpu().numpy().astype(int)
-                label = model.names[cls]
+                frame_count += 1
+                elapsed = time.time() - start_time
+                current_fps = frame_count / elapsed
+                fps_list.append(current_fps)
+                timestamps.append((t_start, t_end))
 
-                cv2.rectangle(frame, (bbox[0], bbox[1]), (bbox[2], bbox[3]), (0, 0, 255), 2)
-                cv2.putText(frame, f"{label} {int(conf*100)}%", (bbox[0], bbox[1]-10),
-                            cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2)
+                for r in results.boxes:
+                    cls = int(r.cls)
+                    conf = float(r.conf)
+                    bbox = r.xyxy[0].cpu().numpy().astype(int)
+                    label = model.names[cls]
 
-            cv2.putText(frame, f"FPS: {current_fps:.2f}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-            out.write(frame)
+                    cv2.rectangle(frame, (bbox[0], bbox[1]), (bbox[2], bbox[3]), (0, 0, 255), 2)
+                    cv2.putText(frame, f"{label} {int(conf*100)}%", (bbox[0], bbox[1]-10),
+                                cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2)
 
-            if frame_count % 300 == 0:
-                parsed = parse_tegrastats(f"tmp/temp_power_gpu_{saved_file_timestamp}.txt")
+                cv2.putText(frame, f"FPS: {current_fps:.2f}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+                out.write(frame)
 
-                filtered, _ = filter_data(parsed, timestamps[-300:])
-                power_data = get_powerdraw(filtered)
+                if frame_count % 300 == 0:
+                    parsed = parse_tegrastats(f"tmp/temp_power_gpu_{saved_file_timestamp}.txt")
 
-                writer.writerow([
-                    frame_count,
-                    sum(fps_list[-300:]) / 300,
-                    power_data["VDD_IN"].mean,
-                    power_data["VDD_CPU_GPU_CV"].mean,
-                    power_data["VDD_SOC"].mean,
-                    power_data["VDD_TOTAL"].mean,
-                ])
+                    filtered, _ = filter_data(parsed, timestamps[-300:])
+                    power_data = get_powerdraw(filtered)
 
-cap.release()
-out.release()
-print(f"[INFO] Saved to {OUTPUT_VIDEO}")
-print(f"[INFO] Benchmarks saved to {BENCHMARK_CSV}")
+                    writer.writerow([
+                        frame_count,
+                        sum(fps_list[-300:]) / 300,
+                        power_data["VDD_IN"].mean,
+                        power_data["VDD_CPU_GPU_CV"].mean,
+                        power_data["VDD_SOC"].mean,
+                        power_data["VDD_TOTAL"].mean,
+                    ])
+
+    cap.release()
+    out.release()
+    print(f"[INFO] Saved to {OUTPUT_VIDEO}")
+    print(f"[INFO] Benchmarks saved to {BENCHMARK_CSV}")
