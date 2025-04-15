@@ -25,15 +25,16 @@ def oakd_benchmark(video_name, num_shaves=8):
         YOLOV8N_CONFIG = "oakd_models/fall_detection_8shaves/best.json"
     else:
         print("RUNNING 16 SHAVES MODEL")
+        num_shaves = 16
         YOLOV8N_MODEL = "oakd_models/fall_detection_16shaves/best_openvino_2022.1_16shave.blob"
         YOLOV8N_CONFIG = "oakd_models/fall_detection_16shaves/best.json"
 
     # File setup
     saved_file_timestamp = datetime.datetime.now().strftime("%m%d_%H%M%S")
     INPUT_VIDEO = f"videos/in/{video_name}"
-    OUTPUT_VIDEO = f"videos/out/result_oakd_{saved_file_timestamp}.mp4"
-    BENCHMARK_CSV = f"benchmark_results/oakd_{saved_file_timestamp}.csv"
-    TEMP_POWER = f"tmp/temp_power_oakd_{saved_file_timestamp}.txt"
+    OUTPUT_VIDEO = f"videos/out/result_oakd_{num_shaves}_shaves_{saved_file_timestamp}.mp4"
+    BENCHMARK_CSV = f"benchmark_results/oakd_{num_shaves}_shaves_{saved_file_timestamp}.csv"
+    TEMP_POWER = f"tmp/temp_power_oakd_{num_shaves}_shaves_{saved_file_timestamp}.txt"
     os.makedirs("benchmark_results", exist_ok=True)
 
     # Constants
