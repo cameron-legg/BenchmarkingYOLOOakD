@@ -97,17 +97,8 @@ def oakd_benchmark(video_name, num_shaves=8, inference_threads=2):
         return pipeline
 
     def to_planar(arr: np.ndarray, shape: tuple) -> np.ndarray:
-        # resized = cv2.resize(arr, shape)
-        # return resized.transpose(2, 0, 1)
-        blob = cv2.dnn.blobFromImage(
-            arr,
-            scalefactor=1.0,             # or 1/255.0 if model expects normalized input
-            size=shape,                  # (width, height)
-            mean=(0, 0, 0),              # optional, for mean subtraction
-            swapRB=False,                # True if model uses RGB and image is BGR
-            crop=False
-        )
-        return blob[0]  # remove batch dimension, shape becomes [C, H, W]
+        resized = cv2.resize(arr, shape)
+        return resized.transpose(2, 0, 1)
 
     def frame_norm(frame, bbox):
         norm_vals = np.full(len(bbox), frame.shape[0])
