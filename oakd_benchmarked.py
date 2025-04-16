@@ -19,10 +19,34 @@ def oakd_benchmark(video_name, num_shaves=8):
         print("RUNNING 6 SHAVES MODEL")
         YOLOV8N_MODEL = "oakd_models/fall_detection_6shaves/falldetectionmodel_openvino_2022.1_6shave.blob"
         YOLOV8N_CONFIG = "oakd_models/fall_detection_6shaves/falldetectionmodel.json"
+    elif num_shaves == 1:
+        print("RUNNING 1 SHAVES MODEL")
+        YOLOV8N_MODEL = "oakd_models/fall_detection_1shave/best_openvino_2022.1_1shave.blob"
+        YOLOV8N_CONFIG = "oakd_models/fall_detection_1shave/best.json"
+    elif num_shaves == 2:
+        print("RUNNING 2 SHAVES MODEL")
+        YOLOV8N_MODEL = "oakd_models/fall_detection_2shaves/best_openvino_2022.1_2shave.blob"
+        YOLOV8N_CONFIG = "oakd_models/fall_detection_2shaves/best.json"
+    elif num_shaves == 4:
+        print("RUNNING 4 SHAVES MODEL")
+        YOLOV8N_MODEL = "oakd_models/fall_detection_4shaves/best_openvino_2022.1_4shave.blob"
+        YOLOV8N_CONFIG = "oakd_models/fall_detection_4shaves/best.json"
     elif num_shaves == 8:
         print("RUNNING 8 SHAVES MODEL")
         YOLOV8N_MODEL = "oakd_models/fall_detection_8shaves/best_openvino_2022.1_8shave.blob"
         YOLOV8N_CONFIG = "oakd_models/fall_detection_8shaves/best.json"
+    elif num_shaves == 10:
+        print("RUNNING 10 SHAVES MODEL")
+        YOLOV8N_MODEL = "oakd_models/fall_detection_10shaves/best_openvino_2022.1_10shave.blob"
+        YOLOV8N_CONFIG = "oakd_models/fall_detection_10shaves/best.json"
+    elif num_shaves == 12:
+        print("RUNNING 12 SHAVES MODEL")
+        YOLOV8N_MODEL = "oakd_models/fall_detection_12shaves/best_openvino_2022.1_12shave.blob"
+        YOLOV8N_CONFIG = "oakd_models/fall_detection_12shaves/best.json"
+    elif num_shaves == 14:
+        print("RUNNING 14 SHAVES MODEL")
+        YOLOV8N_MODEL = "oakd_models/fall_detection_14shaves/best_openvino_2022.1_14shave.blob"
+        YOLOV8N_CONFIG = "oakd_models/fall_detection_14shaves/best.json"
     else:
         print("RUNNING 16 SHAVES MODEL")
         num_shaves = 16
@@ -119,8 +143,8 @@ def oakd_benchmark(video_name, num_shaves=8):
 
                 while cap.isOpened():
                     ret, frame = cap.read()
-                    if not ret or frame_count >= int(fps_cap * 60 * 3):
-                        break
+                    # if not ret or frame_count >= int(fps_cap * 60 * 3):
+                    #     break
 
                     t_start = time.time()
                     frame_count += 1
