@@ -20,13 +20,14 @@ end = time.time()
 log_wall_time("gpu_benchmark", start, end)
 
 # OAK-D Benchmarks
-for shaves in [1, 2, 4, 8, 10, 12, 14, 16]:
-    time.sleep(600) # wait for 10 minutes to let the device cool down after every run
-    label = f"oakd_benchmark_{shaves}shaves"
-    start = time.time()
-    oakd_benchmark(VIDEO_PATH, num_shaves=shaves)
-    end = time.time()
-    log_wall_time(label, start, end)
+for inference_threads in [1,2,3]:
+    for shaves in [1, 2, 4, 8, 10, 12, 14, 16]:
+        time.sleep(600) # wait for 10 minutes to let the device cool down after every run
+        label = f"oakd_benchmark_{shaves}shaves_{inference_threads}ithreads"
+        start = time.time()
+        oakd_benchmark(VIDEO_PATH, num_shaves=shaves, inference_threads=inference_threads)
+        end = time.time()
+        log_wall_time(label, start, end)
     
 # CPU Benchmark
 start = time.time()
