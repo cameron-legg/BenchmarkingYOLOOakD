@@ -8,6 +8,11 @@ https://learnopencv.com/object-detection-on-edge-device/
 https://www.kaggle.com/datasets/uttejkumarkandagatla/fall-detection-dataset?resource=download
 
 
+How to use:
+Run entire benchmark with
+nohup python3 Master_Benchmark.py > /dev/null 2>&1 &
+
+
 
 What to answer:
 
