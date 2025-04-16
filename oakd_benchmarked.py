@@ -1,4 +1,4 @@
-def oakd_benchmark(video_name, num_shaves=8):
+def oakd_benchmark(video_name, num_shaves=8, inference_threads=2):
     import depthai as dai
     import json
     import os
@@ -56,9 +56,9 @@ def oakd_benchmark(video_name, num_shaves=8):
     # File setup
     saved_file_timestamp = datetime.datetime.now().strftime("%m%d_%H%M%S")
     INPUT_VIDEO = f"videos/in/{video_name}"
-    OUTPUT_VIDEO = f"videos/out/result_oakd_{num_shaves}_shaves_{saved_file_timestamp}.mp4"
-    BENCHMARK_CSV = f"benchmark_results/oakd_{num_shaves}_shaves_{saved_file_timestamp}.csv"
-    TEMP_POWER = f"tmp/temp_power_oakd_{num_shaves}_shaves_{saved_file_timestamp}.txt"
+    OUTPUT_VIDEO = f"videos/out/result_oakd_{num_shaves}_shaves_{inference_threads}_threads_{saved_file_timestamp}.mp4"
+    BENCHMARK_CSV = f"benchmark_results/oakd_{num_shaves}_shaves_{inference_threads}_threads_{saved_file_timestamp}.csv"
+    TEMP_POWER = f"tmp/temp_power_oakd_{num_shaves}_shaves_{inference_threads}_threads_{saved_file_timestamp}.txt"
     os.makedirs("benchmark_results", exist_ok=True)
 
     # Constants
@@ -88,7 +88,7 @@ def oakd_benchmark(video_name, num_shaves=8):
         detectionNetwork.setAnchorMasks(metadata.get("anchor_masks", {}))
         detectionNetwork.setIouThreshold(metadata.get("iou_threshold", {}))
         detectionNetwork.setBlobPath(model_path)
-        detectionNetwork.setNumInferenceThreads(2)
+        detectionNetwork.setNumInferenceThreads(inference_threads)
         detectionNetwork.input.setBlocking(False)
 
         detectionIN.out.link(detectionNetwork.input)
@@ -97,8 +97,17 @@ def oakd_benchmark(video_name, num_shaves=8):
         return pipeline
 
     def to_planar(arr: np.ndarray, shape: tuple) -> np.ndarray:
-        resized = cv2.resize(arr, shape)
-        return resized.transpose(2, 0, 1)
+        # resized = cv2.resize(arr, shape)
+        # return resized.transpose(2, 0, 1)
+        blob = cv2.dnn.blobFromImage(
+            arr,
+            scalefactor=1.0,             # or 1/255.0 if model expects normalized input
+            size=shape,                  # (width, height)
+            mean=(0, 0, 0),              # optional, for mean subtraction
+            swapRB=False,                # True if model uses RGB and image is BGR
+            crop=False
+        )
+        return blob[0]  # remove batch dimension, shape becomes [C, H, W]
 
     def frame_norm(frame, bbox):
         norm_vals = np.full(len(bbox), frame.shape[0])
