@@ -262,3 +262,27 @@ Traceback (most recent call last):
 cv2.error: OpenCV(4.11.0) /io/opencv/modules/imgproc/src/resize.cpp:4208: error: (-215:Assertion failed) !ssize.empty() in function 'resize'
 
 
+
+[ERROR] oakd_benchmark_14shaves_3ithreads failed:
+Traceback (most recent call last):
+  File "/home/clegg/project/Master_Benchmark.py", line 44, in <module>
+    oakd_benchmark(VIDEO_PATH, num_shaves=shaves, inference_threads=inference_threads)
+  File "/home/clegg/project/oakd_benchmarked.py", line 162, in oakd_benchmark
+    nn_data.setLayer("input", to_planar(frame, CAMERA_PREVIEW_DIM))
+  File "/home/clegg/project/oakd_benchmarked.py", line 102, in to_planar
+    blob = cv2.dnn.blobFromImage(
+cv2.error: OpenCV(4.11.0) /io/opencv/modules/imgproc/src/resize.cpp:4208: error: (-215:Assertion failed) !ssize.empty() in function 'resize'
+
+
+
+[ERROR] oakd_benchmark_16shaves_3ithreads failed:
+Traceback (most recent call last):
+  File "/home/clegg/project/Master_Benchmark.py", line 44, in <module>
+    oakd_benchmark(VIDEO_PATH, num_shaves=shaves, inference_threads=inference_threads)
+  File "/home/clegg/project/oakd_benchmarked.py", line 162, in oakd_benchmark
+    nn_data.setLayer("input", to_planar(frame, CAMERA_PREVIEW_DIM))
+  File "/home/clegg/project/oakd_benchmarked.py", line 102, in to_planar
+    blob = cv2.dnn.blobFromImage(
+cv2.error: OpenCV(4.11.0) /io/opencv/modules/imgproc/src/resize.cpp:4208: error: (-215:Assertion failed) !ssize.empty() in function 'resize'
+
+
