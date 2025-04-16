@@ -23,6 +23,8 @@ def log_error(name: str, error: Exception):
         f.write(traceback.format_exc())
         f.write("\n")
 
+total_time_start = time.time()
+
 # GPU Benchmark
 try:
     start = time.time()
@@ -53,3 +55,8 @@ try:
     log_wall_time("cpu_benchmark", start, end)
 except Exception as e:
     log_error("cpu_benchmark", e)
+
+
+
+total_time_end = time.time()
+log_wall_time("total benchmark runtime", total_time_start, total_time_end)
