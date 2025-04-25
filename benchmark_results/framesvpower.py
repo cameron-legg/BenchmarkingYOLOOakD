@@ -13,7 +13,7 @@ for filename in os.listdir(directory):
     if filename.endswith(".csv"):
         try:
             df = pd.read_csv(os.path.join(directory, filename))
-            plt.plot(df["frame"], df["VDD_TOTAL"], label=filename.replace(".csv", "").rsplit('_',2)[0])
+            plt.plot(df["frame"][2:], df["VDD_TOTAL"][2:], label=filename.replace(".csv", "").rsplit('_',2)[0])
         except Exception as e:
             print(f"Skipping {filename}: {e}")
 

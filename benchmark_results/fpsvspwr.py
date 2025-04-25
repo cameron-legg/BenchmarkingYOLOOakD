@@ -14,8 +14,8 @@ for filename in os.listdir(directory):
         try:
             df = pd.read_csv(filepath)
             base_name = filename.replace(".csv", "")
-            average_fps[base_name] = df["fps"].mean()
-            average_power[base_name] = df["VDD_TOTAL"].mean() #- df["VDD_SOC"].mean()
+            average_fps[base_name] = df["fps"][2:].mean()
+            average_power[base_name] = df["VDD_TOTAL"][2:].mean() #- df["VDD_SOC"].mean()
         except Exception:
             continue
 

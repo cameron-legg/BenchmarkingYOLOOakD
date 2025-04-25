@@ -5,7 +5,7 @@ from cpu_benchmarked import cpu_benchmark
 from gpu_benchmarked import gpu_benchmark
 from oakd_benchmarked import oakd_benchmark
 
-VIDEO_PATH = "benchmarkvid.mp4"
+VIDEO_PATH = "benchmarkvid-small.mp4"
 BENCHMARK_DIR = "benchmark_results"
 WALL_TIMES_FILE = os.path.join(BENCHMARK_DIR, "wall_times.txt")
 ERROR_LOG_FILE = os.path.join(BENCHMARK_DIR, "error_log.txt")
@@ -35,8 +35,8 @@ except Exception as e:
     log_error("gpu_benchmark", e)
 
 # OAK-D Benchmarks with cooldown
-for inference_threads in [1, 2, 3]:
-    for shaves in [1, 2, 4, 8, 10, 12, 14, 16]:
+for inference_threads in [2]:
+    for shaves in [2, 10, 14]:
         time.sleep(600)  # Wait 10 minutes between runs
         label = f"oakd_benchmark_{shaves}shaves_{inference_threads}ithreads"
         try:

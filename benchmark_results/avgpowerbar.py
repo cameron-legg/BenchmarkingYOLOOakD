@@ -12,7 +12,7 @@ for filename in os.listdir(directory):
             continue
         try:
             df = pd.read_csv(filepath)
-            avg_power = df["VDD_TOTAL"].mean()
+            avg_power = df["VDD_TOTAL"][2:].mean()
             average_power[filename.replace(".csv", "")] = avg_power
         except Exception:
             continue

@@ -16,7 +16,7 @@ for filename in os.listdir(directory):
             continue
         try:
             df = pd.read_csv(filepath)
-            plt.plot(df["frame"], df["fps"], label=filename.replace(".csv", "").rsplit('_',2)[0])
+            plt.plot(df["frame"][2:], df["fps"][2:], label=filename.replace(".csv", "").rsplit('_',2)[0])
         except Exception as e:
             print(f"Skipping {filename}: {e}")
 

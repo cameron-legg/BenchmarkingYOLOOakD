@@ -12,7 +12,7 @@ for filename in os.listdir(directory):
             continue
         try:
             df = pd.read_csv(filepath)
-            avg_fps = df["fps"].mean()
+            avg_fps = df["fps"][2:].mean()
             average_fps[filename.replace(".csv", "")] = avg_fps
         except Exception:
             continue
