@@ -2,3 +2,12 @@ venv/
 videos/in/long_vid.mp4
 ignored_directory/
 videos/out/
+
+FinalReport/main.aux
+FinalReport/main.bbl
+FinalReport/main.fdb_latexmk
+FinalReport/main.fls
+FinalReport/main.log
+FinalReport/main.out
+FinalReport/main.synctex.gz
+main.blg

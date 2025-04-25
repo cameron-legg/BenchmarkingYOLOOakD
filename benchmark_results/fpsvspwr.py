@@ -15,7 +15,7 @@ for filename in os.listdir(directory):
             df = pd.read_csv(filepath)
             base_name = filename.replace(".csv", "")
             average_fps[base_name] = df["fps"].mean()
-            average_power[base_name] = df["VDD_TOTAL"].mean()
+            average_power[base_name] = df["VDD_TOTAL"].mean() #- df["VDD_SOC"].mean()
         except Exception:
             continue
 
@@ -29,11 +29,13 @@ plt.scatter(x, y)
 
 # Annotate each point with the filename (small font)
 for i, label in enumerate(labels):
-    plt.annotate(label, (x[i], y[i]), fontsize=6, alpha=0.7)
+    plt.annotate(label.rsplit('_',2)[0], (x[i], y[i]), fontsize=12, alpha=0.7)
 
-plt.xlabel("Average FPS")
-plt.ylabel("Average Power Draw (VDD_TOTAL in mW)")
-plt.title("Power Consumption vs FPS per Benchmark Run")
+        
+
+plt.xlabel("Average FPS", fontsize=20)
+plt.ylabel("Average Power Draw (VDD_TOTAL in mW)", fontsize=15)
+plt.title("Power Consumption vs FPS per Benchmark Run", fontsize=20)
 plt.grid(True)
 plt.tight_layout()
 plt.show()

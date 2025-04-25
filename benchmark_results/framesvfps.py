@@ -16,14 +16,14 @@ for filename in os.listdir(directory):
             continue
         try:
             df = pd.read_csv(filepath)
-            plt.plot(df["frame"], df["fps"], label=filename.replace(".csv", ""))
+            plt.plot(df["frame"], df["fps"], label=filename.replace(".csv", "").rsplit('_',2)[0])
         except Exception as e:
             print(f"Skipping {filename}: {e}")
 
-plt.title("Frames vs FPS")
-plt.xlabel("Frame")
-plt.ylabel("FPS")
-plt.legend(fontsize="large", loc="upper right")
+plt.title("Frames vs FPS", fontsize=25)
+plt.xlabel("Frame", fontsize=25)
+plt.ylabel("FPS", fontsize=25)
+plt.legend(fontsize="x-large", loc="upper right")
 plt.grid(True)
 plt.tight_layout()
 # plt.savefig("frames_vs_fps.png")  # Save instead of showing
