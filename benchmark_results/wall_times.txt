@@ -1,1 +1,6 @@
 gpu_benchmark: 475.94 seconds
+cpu_benchmark: 3452.22 seconds
+total benchmark runtime: 69295.56 seconds
+gpu_benchmark: 361.71 seconds
+cpu_benchmark: 3415.13 seconds
+total benchmark runtime: 11048.52 seconds
