@@ -60,14 +60,21 @@ Explain/introduce the project you did. Including:
 
 \subsection{Challenges}
 What are the challenges you have faced  while using this interface and how you tackled them?
+Maybe talk about how we origionally started with the raspberry pi, but couldn't due to need to measure power consumption. Talk about the conversion process. Think of other challenges.
 
 \section{Experiment Setup  {\small {[2 pts]}}}
 
 \subsection{Methodology}  
-How did you set up your experiments? How many iterations of executions have you made? How did you eliminate the noise from your results? Etc.
+\begin{itemize}
+    \item Talk about yolo, training yolo, the dataset, google collab, etc
+    \item Talk about the specifics of the benchmark.
+    \item Talk about what we recorded.
+    \item Talk about formats of files saved
+\end{itemize}
 
 \subsection{Metrics measured and Comparisons made}
 What are the metrics (e.g. time, power, energy, etc.) being measured? What is being compared (e.g., applications and/or HW)? Through which methodology? What is your baseline?
+CPU GPU Oak-D shaves threads
 
 \section{Results {\small {[9 pts]}}}  
 Present your results (with charts) here. For each experiment you did:
@@ -75,11 +82,21 @@ Present your results (with charts) here. For each experiment you did:
     \item Insert a chart/figure/table 
     \item Explain the information that chart/figure/table gives
     \item Interprete results. Refer to more data, if available, to support your interpretation. 
+    \item Try to just cover what we talked about in the presentation. Add a little more data on the smaller video file size (352 x 240)
 \end{itemize}
 
 There is no min/max limit on the charts. Try to logically group the information if you could. For example, you may include one chart for time measurement, another for power/energy, and another for the breakdown of the performance (data movement overhead, etc.). I expect this to be the most detailed section of your report.
 
 Also, please address the feedback I have given during your project presention.
+
+\begin{itemize}
+    \item Power consumption VS FPS Scatterplot (may need to show multiple screenshots like in the presentation) -- slides 12-14
+    \item Frame vs FPS -- how num of chaves affects FPS (include the figure with CPU + GPU include as well) -- slides 15-16
+    \item Frame vs Power draw -- slide 17
+    \item power draw for different shaves -- slide 18
+    \item same shaves, different threads -- slides 19-20
+    \item add one more comparison with a smaller video size (already recorded, pushed to repo)
+\end{itemize}
 
 \section{Link to Source and other resources {\small {[3 pts]}}} 
 Please insert the public repository link that includes the scripts you have used, the applications you developed (if you did), the presentations and the results. Also, if available, include the links to other tutorials you followed to set up the device and benchmarks.
