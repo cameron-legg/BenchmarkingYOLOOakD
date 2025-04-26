@@ -32,25 +32,25 @@
 
 \maketitle
 
-\section{Introduction}
+\section{Introduction - Cameron}
 In this project, we did a study with the Oak-D camera, operating on the Nvidia Orin NX. We vary parameters such as the number of shaves (cores), inference threads, and video size. We then compare the results.
 
-\section{Targeted domain {\small [2 pts]}}
+\section{Targeted domain {\small [2 pts]} - Ben}
 Explain the application or the domain you have presented on and experimented with. 
 
-\section{Motivation: The need for acceleration {\small {[2 pts]}}}
+\section{Motivation: The need for acceleration {\small {[2 pts]}} - Cameron}
 
 Why do we need beyond CPU processing for this domain and/or application? Motivate it.
 
-\section{Related work {\small {[8 pts]}}}
+\section{Related work {\small {[8 pts]}} - Cameron + Ben}
 Starting with the short summary of the paper you presented, explain how other work tackled the acceleration problem for the targeted domain. For the paper you presented, state the key idea(s), solution(s) and contribution(s) of the paper(s) and briefly talk about the technical details of their approach.
 
 You don't need to read additional papers, however, in your summary above, please cite at least 3 other related works that you learned about while you are reading the paper you presented. 
 
-\subsection{Current Limitations}
+\subsection{Current Limitations - Ben}
 Briefly talk about weaknesses of current approaches, if available. 
 
-\section{Project Description  {\small {[2 pts]}}}
+\section{Project Description  {\small {[2 pts]}} - Cameron}
 Explain/introduce the project you did. Including: 
 \begin{itemize}
     \item Selected application/benchmark, the specific kernels that are being accelerated. The details of the parallelization, if available. (Don't repeat information you gave eairlier above)
@@ -58,13 +58,13 @@ Explain/introduce the project you did. Including:
     \item What is/are the programming interface (s) and/or runtime framework (e.g., CUDA, tensorrt etc.) being used for acceleration? Details...
 \end{itemize}
 
-\subsection{Challenges}
+\subsection{Challenges - Ben}
 What are the challenges you have faced  while using this interface and how you tackled them?
 Maybe talk about how we origionally started with the raspberry pi, but couldn't due to need to measure power consumption. Talk about the conversion process. Think of other challenges.
 
 \section{Experiment Setup  {\small {[2 pts]}}}
 
-\subsection{Methodology}  
+\subsection{Methodology - Cameron}  
 \begin{itemize}
     \item Talk about yolo, training yolo, the dataset, google collab, etc
     \item Talk about the specifics of the benchmark.
@@ -72,7 +72,7 @@ Maybe talk about how we origionally started with the raspberry pi, but couldn't 
     \item Talk about formats of files saved
 \end{itemize}
 
-\subsection{Metrics measured and Comparisons made}
+\subsection{Metrics measured and Comparisons made - Ben}
 What are the metrics (e.g. time, power, energy, etc.) being measured? What is being compared (e.g., applications and/or HW)? Through which methodology? What is your baseline?
 CPU GPU Oak-D shaves threads
 
@@ -90,22 +90,22 @@ There is no min/max limit on the charts. Try to logically group the information 
 Also, please address the feedback I have given during your project presention.
 
 \begin{itemize}
-    \item Power consumption VS FPS Scatterplot (may need to show multiple screenshots like in the presentation) -- slides 12-14
-    \item Frame vs FPS -- how num of chaves affects FPS (include the figure with CPU + GPU include as well) -- slides 15-16
-    \item Frame vs Power draw -- slide 17
-    \item power draw for different shaves -- slide 18
-    \item same shaves, different threads -- slides 19-20
-    \item add one more comparison with a smaller video size (already recorded, pushed to repo)
+    \item (Cameron) Power consumption VS FPS Scatterplot (may need to show multiple screenshots like in the presentation) -- slides 12-14 
+    \item (Cameron) Frame vs FPS -- how num of shaves affects FPS (include the figure with CPU + GPU include as well) -- slides 15-16
+    \item (Ben) Frame vs Power draw -- slide 17
+    \item (Ben) power draw for different shaves -- slide 18
+    \item (Ben) same shaves, different threads -- slides 19-20
+    \item (Ben + Cameron) add one more comparison with a smaller video size (already recorded, pushed to repo)
 \end{itemize}
 
-\section{Link to Source and other resources {\small {[3 pts]}}} 
+\section{Link to Source and other resources {\small {[3 pts]}} - Cameron} 
 Please insert the public repository link that includes the scripts you have used, the applications you developed (if you did), the presentations and the results. Also, if available, include the links to other tutorials you followed to set up the device and benchmarks.
 
-\section{Project/class Takeaway {\small {[2 pts]}}}  
+\section{Project/class Takeaway {\small {[2 pts]}} - Cameron + Ben}  
 Write a brief paragraph on what you have learned ``new" regarding performance analysis and overall on ``compute acceleration". Please also include your honest, brief opinion on how this new knowledge could help your future career. Focus only on what you have learned. I will use this information to evaluate and improve the learning objectives of the class. 
 
 
-\section{Feedback {\small {[+1 pts (goes to participation)]}}}  
+\section{Feedback {\small {[+1 pts (goes to participation)]}} - Cameron + Ben}  
 In addition to the anonymous and official class feedback (which I strongly encourage you to do), please include any other feedback and suggestions (format, content, evaluation, project, etc.) to improve the class.
 
 
