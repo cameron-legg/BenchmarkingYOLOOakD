@@ -2,7 +2,7 @@ import os
 import pandas as pd
 import matplotlib.pyplot as plt
 
-directory = "."  # Update this path if needed
+directory = "."
 average_power = {}
 
 for filename in os.listdir(directory):

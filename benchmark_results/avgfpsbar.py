@@ -2,7 +2,7 @@ import os
 import pandas as pd
 import matplotlib.pyplot as plt
 
-directory = "."  # Change if needed
+directory = "."
 average_fps = {}
 
 for filename in os.listdir(directory):

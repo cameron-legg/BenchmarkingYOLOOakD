@@ -2,10 +2,10 @@ import os
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib
-matplotlib.use('Qt5Agg')  # or 'TkAgg' if you prefer
+matplotlib.use('Qt5Agg')
 
 
-directory = "."  # Change to your CSV directory if needed
+directory = "." 
 
 plt.figure(figsize=(12, 6))
 

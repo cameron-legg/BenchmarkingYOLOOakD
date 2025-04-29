@@ -2,7 +2,7 @@ import os
 import pandas as pd
 import matplotlib.pyplot as plt
 
-directory = "."  # Update as needed
+directory = "." 
 average_fps = {}
 average_power = {}
 

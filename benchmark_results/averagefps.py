@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 
-directory = "."  # Change this if your CSVs are in another folder
+directory = "."
 average_fps = {}
 
 for filename in os.listdir(directory):

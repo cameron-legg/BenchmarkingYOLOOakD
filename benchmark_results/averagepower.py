@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 
-directory = "."  # Change this if your CSVs are in another folder
+directory = "."
 average_vdd_total = {}
 
 for filename in os.listdir(directory):
@@ -16,7 +16,7 @@ for filename in os.listdir(directory):
         except Exception:
             continue
 
-# Sort by average VDD_TOTAL ascending (lower power consumption is better)
+# Sort by average VDD_TOTAL ascending 
 sorted_vdd = sorted(average_vdd_total.items(), key=lambda x: x[1])
 
 # Print results
