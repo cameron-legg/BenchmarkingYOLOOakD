@@ -31,5 +31,5 @@ NOTE: The input video is stored as benchmarkvid.mp4 in videos/in. If you want to
 
 ## Results
 The results will be saved / are located in the benchmark_results directory. There will be CSV files with each benchmark run, along with scripts that can be used to visualize the data. If you don't want to include some benchmarks in the graphs, simply move the CSV files to another folder.
-Inferenced videos will be saved to videos/out.s
+Inferenced videos will be saved to videos/out.
 
