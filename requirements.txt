@@ -1,0 +1,4 @@
+benchmark-utils
+depthai
+opencv-python
+ultralytics
