@@ -43,10 +43,16 @@ Explain the application or the domain you have presented on and experimented wit
 
 Detecting human falls may require edge devices to be placed around in many different places. These places could have power restrictions or size restrictions. It is not very practical to place a computer, running a full size graphics card everywhere a camera is needed. In this case, an accelerator is perfect because inferencing can be done rather quickly with a device that is smaller and consumes low power. This is due to the accelerator being designed for that specific application.
 
-\section{Related work {\small {[8 pts]}} - Cameron + Ben}
+\section{Related work {\small {[8 pts]}}}
 Starting with the short summary of the paper you presented, explain how other work tackled the acceleration problem for the targeted domain. For the paper you presented, state the key idea(s), solution(s) and contribution(s) of the paper(s) and briefly talk about the technical details of their approach.
 
 You don't need to read additional papers, however, in your summary above, please cite at least 3 other related works that you learned about while you are reading the paper you presented. 
+
+The paper we read was \textit{Human Fall Detection using YOLO: A Real{-}Time and AI{-}on{-}the{-}Edge Perspective} by Ali Raza et al. [1] focused on detecting falls in a non-intrusive way. The authors defined intrustive as using wearables on on-body sensors. Their idea was to detect human falls using computer vision on an edge device. How they attacked this problem was by running a YOLO Darknet model trained for detecting human falls on a Raspberry Pi with the Oak-D camera and its computer vision accelerator. The Oak-D camera that they used is the same camera that we used in our project. This paper contributes to the scientific community a way to run YOLO models on the Oak-D camera by converting the PyTorch files to OpenVino formatting. The strengths of the paper include proving that there is an effective, non-intrusive way to detect human falls using a computer vision approach. They also proved that fall detection can be done on an edge device, which could theoretically be placed anywhere. The main weakness of this paper was that they did not compare power consumption, which is an aspect that we decided to dive into in our project.
+
+Some other approaches to inferencing on edge devices included using other accelerators than the Oak-D camera. One approach by S. Sam et al. uses the Coral Edge TPU as an accelerator to run a YOLO model to detect traffic lights. R. A. Amin et al. also do YOLO inferencing, but using an FPGA. Another source related to this paper is Rey L. et al. [4] researching running AI models on Nvidia Jetson devices for use in UAVs and drones.
+
+All of these related work involve running computer vision and AI applications on some sort of edge device, with the goals in mind to keep smaller form factors and have reduced power consumption as compared to inferencing on full-size GPUs. Each of these contribute some information on how to efficiently run inferencing on smaller devices using YOLO models on different accelerators and hardware.
 
 \subsection{Current Limitations - Ben}
 Briefly talk about weaknesses of current approaches, if available. 
@@ -158,10 +164,15 @@ We really enjoyed this class, especially the project portion. The project allowe
 
 \bibliographystyle{ACM-Reference-Format}
 \bibliography{references}
-[1] A. Raza, M. H. Yousaf and S. A. Velastin, "Human Fall Detection using YOLO: A Real-Time and AI-on-the-Edge Perspective," 2022 12th International Conference on Pattern Recognition Systems (ICPRS), Saint-Etienne, France, 2022, pp. 1-6, doi: 10.1109/ICPRS54038.2022.9854070. keywords: {Image edge detection;Pose estimation;Cameras;Transformers;Real-time systems;Fall detection;Older adults;Computer Vision;Fall Detection;YOLO;OAK-D} \\
 
-[2]
 
+[1] A. Raza, M. H. Yousaf and S. A. Velastin, "Human Fall Detection using YOLO: A Real-Time and AI-on-the-Edge Perspective," 2022 12th International Conference on Pattern Recognition Systems (ICPRS), Saint-Etienne, France, 2022, pp. 1-6, doi: 10.1109/\\ICPRS54038.2022.9854070.\\
+
+[2] S. Sam Xu and S. Shue, "Real-Time Object Detection Algorithm Performance on Edge Computing Devices," 2024 International Symposium on Networks, Computers and Communications (ISNCC), Washington DC, DC, USA, 2024, pp. 1-5, doi: 10.1109/ISNCC62547.2024.10759057. \\
+
+[3] R. A. Amin, M. Hasan, V. Wiese and R. Obermaisser, "FPGA-Based Real-Time Object Detection and Classification System Using YOLO for Edge Computing," in IEEE Access, vol. 12, pp. 73268-73278, 2024, doi: 10.1109/ACCESS.2024.3404623. \\
+
+[4] Rey, L., Bernardos, A. M., Dobrzycki, A. D., Carramiñana, D., Bergesio, L., Besada, J. A., Casar, J. R. (2025). A performance analysis of you only look once models for deployment on constrained computational edge devices in drone applications. Electronics, 14(3), 638. doi:https://doi.org/10.3390/electronics14030638
 
 
 
